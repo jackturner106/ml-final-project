@@ -90,8 +90,6 @@ def load_data(sample_size, icu_vitals=True, top_n_labs=20):
         df = df.merge(icu_vitals, on='hadm_id', how='left')
     
     # ------------------------------------- Lab Results -------------------------------------
-    # Most common lab items
-    # Eventually want to use all 1600 possible lab items
     if top_n_labs > 0:
         lab_items = pd.read_csv(f'derived/lab_counts.csv')
         lab_items = lab_items.nlargest(n=top_n_labs, columns="count")
@@ -132,5 +130,7 @@ def load_data(sample_size, icu_vitals=True, top_n_labs=20):
     X_imputed = X.fillna(X.median(numeric_only=True))
     
     y = df['hospital_expire_flag']
+    
+    print(f"Returing {X_imputed.shape[0]} patient records with {X_imputed.shape[1]} columns. y distribution: \n{y.value_counts(True)}")
     
     return X_imputed, y
