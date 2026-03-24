@@ -1,14 +1,25 @@
 import pandas as pd
 
-def load_data(sample_size, icu_vitals=True, top_n_labs=20):
+def load_data(sample_size, icu_vitals=True, top_n_labs=20, top_n_drugs=20, top_n_procedures=20):
+    """ Load data for predicting survival to discharge. This includes bio data, vitals and labs
+    with no time bound.
+
+    Keyword arguments:
+    sample_size -- The number of data rows to be returned (up to ~500,000)
+    icu_vitals -- Whether or not to include ICU vital data. ICU file is ~40Gb, so this increases load times significantly
+    top_n_labs -- Number of lab tests to include as features. The most common n labs will be selected
+    top_n_drugs -- Number of drug prescriptions to include as features. The most commonly prescribed n drugs will be included
+    top_n_procedures -- Number of procedures to include as features. The most commonly performed n procedures will be included
+
+    """
 
     # ------------------------------------- Patient and Admission -------------------------------------
-    patients = pd.read_csv(f'mimic-iv-3.1/hosp/patients.csv',
+    patients = pd.read_csv('mimic-iv-3.1/hosp/patients.csv',
                         usecols=['subject_id', 'gender', 'anchor_age'])
     patients['gender_female'] = (patients['gender'] == 'F').astype(int)
     patients.drop(columns='gender', inplace=True)
 
-    admissions = pd.read_csv(f'mimic-iv-3.1/hosp/admissions.csv',
+    admissions = pd.read_csv('mimic-iv-3.1/hosp/admissions.csv',
                             usecols=['subject_id', 'hadm_id', 'admittime', 'dischtime',
                                     'deathtime', 'admission_type', 'admission_location',
                                     'insurance', 'race', 'hospital_expire_flag'])
@@ -28,7 +39,7 @@ def load_data(sample_size, icu_vitals=True, top_n_labs=20):
 
     # ------------------------------------- Weight, Heigh, BP -------------------------------------
     # Weight, height, Blood pressure from hosp/omr.csv
-    omr = pd.read_csv(f'mimic-iv-3.1/hosp/omr.csv',
+    omr = pd.read_csv('mimic-iv-3.1/hosp/omr.csv',
                     usecols=['subject_id', 'result_name', 'result_value'])
     # omr also includes BMI, but that would be collinear with weight and height
     omr_bp = omr[
@@ -91,10 +102,10 @@ def load_data(sample_size, icu_vitals=True, top_n_labs=20):
     
     # ------------------------------------- Lab Results -------------------------------------
     if top_n_labs > 0:
-        lab_items = pd.read_csv(f'derived/lab_counts.csv')
+        lab_items = pd.read_csv('derived/lab_counts.csv')
         lab_items = lab_items.nlargest(n=top_n_labs, columns="count")
         
-        lab_events = pd.read_csv(f'mimic-iv-3.1/hosp/labevents.csv',
+        lab_events = pd.read_csv('mimic-iv-3.1/hosp/labevents.csv',
                             usecols=['hadm_id', 'itemid', 'valuenum'],
                             low_memory=True)
         lab_events = lab_events.dropna(subset=['hadm_id', 'valuenum'])
@@ -113,6 +124,60 @@ def load_data(sample_size, icu_vitals=True, top_n_labs=20):
                         .unstack(level='lab_name')
                         .add_prefix('lab_'))
         df = df.merge(lab_features, on='hadm_id', how='left')
+
+    # ------------------------------------- Prescribed Drugs -------------------------------------
+    if top_n_drugs > 0:
+        drug_counts = pd.read_csv('derived/prescription_counts.csv')
+        drug_counts = drug_counts.nlargest(n=top_n_drugs, columns="count")
+
+        prescriptions = pd.read_csv('mimic-iv-3.1/hosp/prescriptions.csv',
+                            usecols=['hadm_id', 'ndc', 'dose_val_rx'],
+                            low_memory=True)
+        prescriptions = prescriptions.dropna(subset=['hadm_id', 'dose_val_rx'])
+        prescriptions['hadm_id'] = prescriptions['hadm_id'].astype(int)
+        prescriptions['dose_val_rx'] = pd.to_numeric(prescriptions['dose_val_rx'], errors='coerce')
+        prescriptions = prescriptions[
+            prescriptions['ndc'].isin(drug_counts['ndc']) &
+            prescriptions['hadm_id'].isin(sampled_hadm_ids)
+        ]
+
+        id_to_label = drug_counts.set_index('ndc')['drug'].to_dict()
+        prescriptions['ndc'] = prescriptions['ndc'].map(id_to_label).str.replace(' ', '_').str.lower()
+
+        drug_features = (prescriptions
+                        .groupby(['hadm_id', 'ndc'])['dose_val_rx']
+                        .mean()
+                        .unstack(level='ndc')
+                        .add_prefix('drug_'))
+       
+        drug_features = drug_features.fillna(0)
+
+        df = df.merge(drug_features, on='hadm_id', how='left')
+
+    # ------------------------------------- Procedures Performed -------------------------------------
+    if top_n_procedures > 0:
+        procedure_counts = pd.read_csv('derived/procedure_counts.csv')
+        procedure_counts = procedure_counts.nlargest(n=top_n_procedures, columns="count")
+
+        procedures = pd.read_csv('mimic-iv-3.1/hosp/procedures_icd.csv',
+                            usecols=['hadm_id', 'icd_code'],
+                            low_memory=True)
+        procedures = procedures.dropna(subset=['hadm_id', 'icd_code'])
+        procedures['hadm_id'] = procedures['hadm_id'].astype(int)
+
+        procedures = procedures[
+            procedures['icd_code'].isin(procedure_counts['icd_code']) &
+            procedures['hadm_id'].isin(sampled_hadm_ids)
+        ]
+
+        procedure_features = (procedures
+                        .groupby(['hadm_id', 'icd_code'])
+                        .size() # number of times the procedure was performed
+                        .unstack(level='icd_code')
+                        .add_prefix('procedure_'))
+        procedure_features = procedure_features.fillna(0)
+        procedure_features.head(100)
+        df = df.merge(procedure_features, on='hadm_id', how='left')
 
 
     # ------------------------------------- Data Engineering -------------------------------------
