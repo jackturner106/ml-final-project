@@ -23,6 +23,22 @@ def load_data(sample_size, icu_vitals=True, top_n_labs=20, top_n_drugs=20, top_n
                             usecols=['subject_id', 'hadm_id', 'admittime', 'dischtime',
                                     'deathtime', 'admission_type', 'admission_location',
                                     'insurance', 'race', 'hospital_expire_flag'])
+    
+    # Sorry but we can't train very well with 32 different columns for race
+    def race_map(race):
+        if race in ["WHITE", "WHITE - RUSSIAN", "WHITE - OTHER EUROPEAN", "WHITE - BRAZILIAN", "WHITE - EASTERN EUROPEAN", "PORTUGUESE"]:
+            return "WHITE"
+        if race.startswith("HISPANIC/LATINO") or race == "HISPANIC OR LATINO" or race == "SOUTH AMERICAN":
+            return "HISPANIC/LATINO"
+        if race.startswith("BLACK"):
+            return "BLACK"
+        if race.startswith("ASIAN"):
+            return "ASIAN"
+        if "NATIVE" in race:
+            return "NATIVE AMERICAN/ALASKA NATIVE"
+        else:
+            return "UNKNOWN OR MULTIPLE"
+    admissions['race'] = admissions['race'].map(race_map)
 
     admissions['admittime'] = pd.to_datetime(admissions['admittime'])
     admissions['dischtime'] = pd.to_datetime(admissions['dischtime'])
@@ -49,7 +65,9 @@ def load_data(sample_size, icu_vitals=True, top_n_labs=20, top_n_drugs=20, top_n
     omr_bp[['bp_systolic', 'bp_diastolic']] = (
         omr_bp['result_value'].str.split('/', expand=True).astype(float)
     )
-    bp_by_subject = omr_bp.groupby('subject_id')[['bp_systolic', 'bp_diastolic']].mean() # this takes the mean of all readings for a particular subject, not the mean of the systolic and diastolic
+    bp_by_subject_mean = omr_bp.groupby('subject_id')[['bp_systolic', 'bp_diastolic']].mean().add_prefix('mean') # this takes the mean of all readings for a particular subject, not the mean of the systolic and diastolic
+    bp_by_subject_max = omr_bp.groupby('subject_id')[['bp_systolic', 'bp_diastolic']].max().add_prefix('max')
+    bp_by_subject_min = omr_bp.groupby('subject_id')[['bp_systolic', 'bp_diastolic']].min().add_prefix('min')
     omr_weight = omr[(omr['result_name'] == 'Weight (Lbs)') & omr['subject_id'].isin(sampled_subject_ids)].copy()
     omr_weight['result_value'] = omr_weight['result_value'].astype(float)
     weight_by_subject = omr_weight.groupby('subject_id')[['result_value']].mean()
@@ -57,7 +75,9 @@ def load_data(sample_size, icu_vitals=True, top_n_labs=20, top_n_drugs=20, top_n
     omr_height['result_value'] = pd.to_numeric(omr_height['result_value'], errors='coerce')
     height_by_subject = omr_height.groupby('subject_id')[['result_value']].mean()
 
-    df = df.merge(bp_by_subject, on='subject_id', how='left')
+    df = df.merge(bp_by_subject_mean, on='subject_id', how='left')
+    df = df.merge(bp_by_subject_max, on='subject_id', how='left')
+    df = df.merge(bp_by_subject_min, on='subject_id', how='left')
     df = df.merge(weight_by_subject, on='subject_id', how='left')
     df = df.merge(height_by_subject, on='subject_id', how='left')
 
@@ -93,12 +113,24 @@ def load_data(sample_size, icu_vitals=True, top_n_labs=20, top_n_drugs=20, top_n
         icu_vitals_raw['hadm_id'] = icu_vitals_raw['hadm_id'].astype(int)
         icu_vitals_raw['vital_name'] = icu_vitals_raw['itemid'].map(VITAL_ITEMS)
 
-        icu_vitals = (icu_vitals_raw
+        icu_vitals_mean = (icu_vitals_raw
                     .groupby(['hadm_id', 'vital_name'])['valuenum']
                     .mean()
                     .unstack('vital_name')
-                    .add_prefix('vital_'))
-        df = df.merge(icu_vitals, on='hadm_id', how='left')
+                    .add_prefix('vital_mean_'))
+        icu_vitals_max = (icu_vitals_raw
+                    .groupby(['hadm_id', 'vital_name'])['valuenum']
+                    .max()
+                    .unstack('vital_name')
+                    .add_prefix('vital_max_'))
+        icu_vitals_min = (icu_vitals_raw
+                    .groupby(['hadm_id', 'vital_name'])['valuenum']
+                    .min()
+                    .unstack('vital_name')
+                    .add_prefix('vital_min_'))
+        df = df.merge(icu_vitals_mean, on='hadm_id', how='left')
+        df = df.merge(icu_vitals_max, on='hadm_id', how='left')
+        df = df.merge(icu_vitals_min, on='hadm_id', how='left')
     
     # ------------------------------------- Lab Results -------------------------------------
     if top_n_labs > 0:
@@ -187,7 +219,7 @@ def load_data(sample_size, icu_vitals=True, top_n_labs=20, top_n_drugs=20, top_n
     df = pd.get_dummies(df, columns=cat_cols, drop_first=True, dtype=int)
 
     # These columns aren't used as features
-    drop_cols = ['subject_id', 'hadm_id', 'admittime', 'dischtime', 'hospital_expire_flag']
+    drop_cols = ['subject_id', 'hadm_id', 'admittime', 'dischtime', 'deathtime', 'hospital_expire_flag']
     feature_cols = [c for c in df.columns if c not in drop_cols]
 
     X = df[feature_cols]
