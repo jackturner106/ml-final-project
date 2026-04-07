@@ -68,6 +68,7 @@ def load_data(sample_size, icu_vitals=True, top_n_labs=20, top_n_drugs=20, top_n
     bp_by_subject_mean = omr_bp.groupby('subject_id')[['bp_systolic', 'bp_diastolic']].mean().add_prefix('mean') # this takes the mean of all readings for a particular subject, not the mean of the systolic and diastolic
     bp_by_subject_max = omr_bp.groupby('subject_id')[['bp_systolic', 'bp_diastolic']].max().add_prefix('max')
     bp_by_subject_min = omr_bp.groupby('subject_id')[['bp_systolic', 'bp_diastolic']].min().add_prefix('min')
+   
     omr_weight = omr[(omr['result_name'] == 'Weight (Lbs)') & omr['subject_id'].isin(sampled_subject_ids)].copy()
     omr_weight['result_value'] = omr_weight['result_value'].astype(float)
     weight_by_subject = omr_weight.groupby('subject_id')[['result_value']].mean()
@@ -183,7 +184,7 @@ def load_data(sample_size, icu_vitals=True, top_n_labs=20, top_n_drugs=20, top_n
                         .add_prefix('drug_'))
        
         drug_features = drug_features.fillna(0)
-
+        
         df = df.merge(drug_features, on='hadm_id', how='left')
 
     # ------------------------------------- Procedures Performed -------------------------------------
