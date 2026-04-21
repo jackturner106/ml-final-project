@@ -1,6 +1,6 @@
 # Featurization and Feature Selection for ICU Data
 
-This repository contains code for logistic regression, LASSO regression, decision trees, and random forests on the MIMIC-IV dataset.
+This repository contains code for logistic regression, LASSO regression, decision trees, and random forests on the MIMIC-IV dataset. Running the code generally requires the MIMIC-IV dataset to be present in the `mimic-iv-3.1/` folder. The MIMIC-IV dataset can be found [here](https://physionet.org/content/mimiciv/), although access requires users to be credentialed on PhysioNet and sign a Data Use Agreement.
 
 ## Data Processing
 
@@ -13,3 +13,7 @@ There are 3 files for data processing
 `FeaturizedMissingness.py` Builds a feature matrix where the missingness of lab information is added as a feature. That is, instead of imputing missing lab values with the mean, each lab column contains a 0 or 1 indicating whether that lab was performed or not.
 
 ## Training and Inferencing
+
+## Other
+
+`derived_data.ipynb` Has code to calculate various descriptive statistics, including finding the most common drugs, labs and procedures. Results from this notebook are stored in the `derived/` folder.
