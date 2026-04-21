@@ -2,9 +2,7 @@ anchor_age
 vital_heart_rate
 vital_respiratory_rate
 lab_absolute_eosinophil_count
-lab_absolute_lymphocyte_count
 lab_absolute_monocyte_count
-"lab_albumin,_pleural"
 lab_alkaline_phosphatase
 lab_alveolar-arterial_gradient
 "lab_amylase,_ascites"
@@ -15,19 +13,16 @@ lab_basophils
 lab_blasts
 lab_c4
 "lab_calculated_bicarbonate,_whole_blood"
-"lab_cholesterol,_pleural"
 lab_ck-mb_index
 lab_cov8mc
 "lab_creatine_kinase,_mb_isoenzyme"
 lab_cyclosporin
-lab_digoxin
 lab_eosinophils
 lab_epithelial_cells
 lab_ferritin
 "lab_fibrinogen,_functional"
 lab_folate
 lab_free_kappa/free_lambda_ratio
-lab_gentamicin
 lab_glucose
 "lab_glucose,_ascites"
 "lab_glucose,_csf"
@@ -43,6 +38,7 @@ lab_iron
 "lab_iron_binding_capacity,_total"
 lab_ketone
 lab_lactate
+"lab_lactate_dehydrogenase,_pleural"
 lab_lactate_dehydrogenase_(ld)
 lab_lithium
 lab_lymphocytes
@@ -66,7 +62,6 @@ lab_po2
 lab_potassium
 "lab_potassium,_whole_blood"
 lab_ptt
-lab_rbc
 lab_rdw
 lab_rdw-sd
 lab_sodium
@@ -74,6 +69,7 @@ lab_specific_gravity
 lab_stx3
 lab_temperature
 "lab_total_nucleated_cells,_ascites"
+"lab_total_nucleated_cells,_pleural"
 "lab_total_protein,_pleural"
 "lab_total_protein,_urine"
 lab_transitional_epithelial_cells
@@ -134,11 +130,9 @@ drug_dexamethasone
 drug_dextrose_10%_in_water_(d10w)
 drug_diazepam
 drug_dibucaine
-drug_digoxin
 drug_diphenhydramine
 drug_docusate_sodium
 drug_docusate_sodium_(liquid)
-drug_dopamine
 drug_doxercalciferol
 drug_doxycycline_hyclate
 drug_duloxetine
@@ -147,7 +141,6 @@ drug_epinephrine
 drug_escitalopram_oxalate
 drug_famotidine
 drug_fexofenadine
-drug_finasteride
 drug_fludrocortisone_acetate
 drug_fluticasone-salmeterol_diskus_(250/50)_
 drug_fluticasone-salmeterol_diskus_(500/50)_
@@ -159,7 +152,6 @@ drug_gastroview_(diatrizoate_meglumine_&_sodium)
 drug_glucagon
 drug_glucose_gel
 drug_glycopyrrolate
-drug_haloperidol
 drug_heparin
 drug_heparin_flush_(1000_units/ml)
 drug_heparin_flush_(100_units/ml)
@@ -222,7 +214,6 @@ drug_potassium_phosphate
 drug_pravastatin
 drug_prochlorperazine
 drug_propofol
-drug_readi-cat_2_(barium_sulfate_2%_suspension)
 drug_scopolamine_patch
 drug_senna
 drug_simvastatin
@@ -280,7 +271,6 @@ procedure_9672
 procedure_9904
 procedure_9915
 procedure_9925
-procedure_B211YZZ
 admission_type_ELECTIVE
 admission_type_EW EMER.
 admission_type_SURGICAL SAME DAY ADMISSION
@@ -306,7 +296,6 @@ lab_c3_missing
 "lab_cholesterol,_pleural_missing"
 lab_creatine_kinase_(ck)_missing
 lab_d-dimer_missing
-lab_digoxin_missing
 "lab_fibrinogen,_functional_missing"
 lab_gamma_glutamyltransferase_missing
 lab_gentamicin_missing
@@ -315,11 +304,9 @@ lab_granular_casts_missing
 lab_h_missing
 "lab_hematocrit,_calculated_missing"
 lab_hyaline_casts_missing
-lab_immunoglobulin_a_missing
 lab_lithium_missing
 lab_mesothelial_cell_missing
 lab_mesothelial_cells_missing
-lab_nucleated_red_cells_missing
 "lab_osmolality,_measured_missing"
 lab_other_cells_missing
 lab_oxygen_missing
@@ -331,6 +318,5 @@ lab_sedimentation_rate_missing
 lab_thyroxine_(t4)_missing
 lab_triglycerides_missing
 lab_troponin_t_missing
-lab_uric_acid_missing
 lab_urobilinogen_missing
 lab_vitamin_b12_missing

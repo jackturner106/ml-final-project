@@ -18,9 +18,13 @@ lab_cyclosporin
 lab_eosinophils
 lab_epithelial_cells
 lab_folate
+lab_free_kappa/free_lambda_ratio
 lab_glucose
+"lab_glucose,_pleural"
 lab_haptoglobin
+lab_heparin
 lab_hyaline_casts
+lab_i
 lab_immature_granulocytes
 lab_immunoglobulin_g
 lab_inr(pt)
@@ -49,6 +53,7 @@ lab_potassium
 "lab_potassium,_whole_blood"
 lab_ptt
 lab_rdw
+lab_rdw-sd
 lab_sodium
 lab_specific_gravity
 lab_stx3
@@ -59,12 +64,15 @@ lab_transitional_epithelial_cells
 lab_troponin_t
 lab_urea_nitrogen
 lab_uric_acid
+lab_utx2
+lab_utx6
 lab_vancomycin
 lab_wbc
 lab_white_blood_cells
 drug_0.9%_nacl_(excel/viaflo_bag)
 drug_0.9%_sodium_chloride
 drug_5%_dextrose
+drug_5%_dextrose_(excel_bag)
 drug_acetaminophen_iv
 drug_acyclovir
 drug_albuterol_0.083%_neb_soln
@@ -77,19 +85,27 @@ drug_artificial_tear_ointment
 drug_ascorbic_acid
 drug_atovaquone_suspension
 drug_atropine_sulfate
+drug_azithromycin
 drug_baclofen
 drug_bisacodyl
+drug_brimonidine
 drug_calcitriol
 drug_calcium_carbonate
 drug_calcium_gluconate
 drug_carvedilol
 drug_cefazolin
+drug_ceftriaxone
 drug_cephalexin
 drug_chlorhexidine_gluconate_0.12%_oral_rinse
 drug_chlorothiazide_sodium
 drug_cinacalcet
+drug_ciprofloxacin_hcl
 drug_citrate_dextrose_3%_(acd-a)_crrt
+drug_clindamycin
+drug_clopidogrel
 drug_creon_12
+drug_cyclophosphamide
+drug_d10w
 drug_d5w
 drug_dextrose_10%_in_water_(d10w)
 drug_diazepam
@@ -99,12 +115,15 @@ drug_docusate_sodium_(liquid)
 drug_doxycycline_hyclate
 drug_duloxetine
 drug_epinephrine
+drug_escitalopram_oxalate
 drug_famotidine
 drug_fexofenadine
+drug_fludrocortisone_acetate
 drug_fluticasone_propionate_110mcg
 drug_furosemide
 drug_gabapentin
 drug_gastroview_(diatrizoate_meglumine_&_sodium)
+drug_glycopyrrolate
 drug_heparin
 drug_heparin_flush_(1000_units/ml)
 drug_heparin_flush_(100_units/ml)
@@ -114,9 +133,11 @@ drug_ibuprofen
 drug_insulin
 drug_insulin_regular_human_(u-500)
 drug_ipratropium-albuterol_neb
+drug_ipratropium_bromide_neb
 drug_ketorolac
 drug_lactulose
 drug_lactulose_enema
+drug_lansoprazole_oral_disintegrating_tab
 drug_levetiracetam
 drug_lidocaine_1%_(for_picc/midline_insertions)
 drug_lidocaine_jelly_2%_(glydo)
@@ -130,6 +151,7 @@ drug_metronidazole_(flagyl)
 drug_micafungin
 drug_midodrine
 drug_milk_of_magnesia
+drug_montelukast
 drug_morphine_sulfate
 drug_multivitamins_w/minerals
 drug_mupirocin_ointment_2%
@@ -137,14 +159,17 @@ drug_mycophenolate_mofetil
 drug_neostigmine
 drug_ns
 drug_olanzapine_(disintegrating_tablet)
+drug_ondansetron_odt
 drug_oxycodone-acetaminophen
 drug_oxycodone_liquid
 drug_oxycodone_sr_(oxycontin)
+drug_oxymetazoline
 drug_phenylephrine
 drug_phytonadione
 drug_pneumococcal_23-valent_polysaccharide_vaccine
 drug_potassium_chl_20_meq_/_1000_ml_d5_1/2_ns
 drug_potassium_chloride
+drug_pravastatin
 drug_prochlorperazine
 drug_propofol
 drug_scopolamine_patch
@@ -155,13 +180,17 @@ drug_tacrolimus_suspension
 drug_tamsulosin
 drug_torsemide
 drug_tramadol
+drug_tramadol_(ultram)
 drug_ursodiol
 drug_valganciclovir
 drug_valproate_sodium
 drug_vancomycin
+drug_vancomycin_oral_liquid
 drug_vasopressin
+drug_venlafaxin
 drug_vitamin_d
 drug_warfarin
+procedure_0040
 procedure_009U3ZX
 procedure_02100Z9
 procedure_02H633Z
@@ -193,6 +222,7 @@ admission_type_ELECTIVE
 admission_type_EW EMER.
 admission_type_SURGICAL SAME DAY ADMISSION
 admission_location_INTERNAL TRANSFER TO OR FROM PSYCH
+admission_location_PACU
 admission_location_PHYSICIAN REFERRAL
 admission_location_TRANSFER FROM SKILLED NURSING FACILITY
 insurance_Other
